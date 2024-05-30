@@ -2,4 +2,4 @@
 bin
 node_modules
 *_templ.go
-./public/styles.css
+/public/styles.css
