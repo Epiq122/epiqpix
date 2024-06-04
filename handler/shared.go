@@ -3,7 +3,17 @@ package handler
 import (
 	"log/slog"
 	"net/http"
+
+	"github.com/epiq122/epiqpixai/models"
 )
+
+func getAuthenticatedUser(r *http.Request) models.AuthenticatedUser {
+	user, ok := r.Context().Value(models.UserContextKey).(models.AuthenticatedUser)
+	if !ok {
+		return models.AuthenticatedUser{}
+	}
+	return user
+}
 
 func MakeHandler(h func(w http.ResponseWriter, r *http.Request) error) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
