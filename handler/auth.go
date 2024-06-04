@@ -1,0 +1,12 @@
+package handler
+
+import (
+	"net/http"
+
+	"github.com/epiq122/epiqpixai/view/auth"
+)
+
+func HandleLoginIndex(w http.ResponseWriter, r *http.Request) error {
+	return auth.Login().Render(r.Context(), w)
+
+}
