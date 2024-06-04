@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/a-h/templ"
 	"github.com/epiq122/epiqpixai/models"
 )
 
@@ -21,4 +22,9 @@ func Make(h func(w http.ResponseWriter, r *http.Request) error) http.HandlerFunc
 			slog.Error("internal server error", "err", err, "path", r.URL.Path)
 		}
 	}
+}
+
+func render(r *http.Request, w http.ResponseWriter, component templ.Component) error {
+
+	return component.Render(r.Context(), w)
 }
