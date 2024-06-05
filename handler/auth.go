@@ -8,8 +8,14 @@ import (
 	"github.com/epiq122/epiqpixai/pkg/kit/validate"
 	"github.com/epiq122/epiqpixai/pkg/sb"
 	"github.com/epiq122/epiqpixai/view/auth"
+	"github.com/gorilla/sessions"
 
 	"github.com/nedpals/supabase-go"
+)
+
+const (
+	sessionUserKey        = "user"
+	sessionAccessTokenKey = "accessToken"
 )
 
 func HandleLoginIndex(w http.ResponseWriter, r *http.Request) error {
@@ -73,7 +79,9 @@ func HandleLoginCreate(w http.ResponseWriter, r *http.Request) error {
 		}))
 	}
 
-	setAuthCookie(w, resp.AccessToken)
+	if err := setAuthSession(w, r, resp.AccessToken); err != nil {
+		return err
+	}
 	return hxRedirect(w, r, "/")
 
 }
@@ -83,35 +91,28 @@ func HandleAuthCallBack(w http.ResponseWriter, r *http.Request) error {
 	if len(accessToken) == 0 {
 		return render(r, w, auth.CallbackScript())
 	}
-	// fmt.Println(accessToken)
-	setAuthCookie(w, accessToken)
+	if err := setAuthSession(w, r, accessToken); err != nil {
+		return err
+	}
 	http.Redirect(w, r, "/", http.StatusFound)
 	return nil
 
 }
 
 func HandleLogoutCreate(w http.ResponseWriter, r *http.Request) error {
-	cookie := http.Cookie{
-		Name:     "at",
-		Value:    "",
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
-		MaxAge:   -1,
-	}
-	http.SetCookie(w, &cookie)
+
+	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
+	session, _ := store.Get(r, sessionUserKey)
+	session.Values[sessionAccessTokenKey] = ""
+	session.Save(r, w)
 	http.Redirect(w, r, "/login", http.StatusFound)
 	return nil
 }
 
-func setAuthCookie(w http.ResponseWriter, accessToken string) {
-	cookie := &http.Cookie{
-		Name:     "at",
-		Value:    accessToken,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
-	}
-	http.SetCookie(w, cookie)
+func setAuthSession(w http.ResponseWriter, r *http.Request, accessToken string) error {
+	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
+	session, _ := store.Get(r, sessionUserKey)
+	session.Values[sessionAccessTokenKey] = accessToken
+	return session.Save(r, w)
 
 }

@@ -3,13 +3,13 @@ package handler
 import (
 	"context"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/epiq122/epiqpixai/models"
 	"github.com/epiq122/epiqpixai/pkg/sb"
+	"github.com/gorilla/sessions"
 )
-
-const userKey = "user"
 
 func WithUser(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -18,21 +18,22 @@ func WithUser(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
+		store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
+		// create helper function to get the session
+		session, err := store.Get(r, sessionUserKey)
+		if err != nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+		accessToken := session.Values[sessionAccessTokenKey]
 
-		user := models.AuthenticatedUser{}
-		cookie, err := r.Cookie("at")
+		resp, err := sb.Client.Auth.User(r.Context(), accessToken.(string))
 		if err != nil {
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		resp, err := sb.Client.Auth.User(r.Context(), cookie.Value)
-		if err != nil {
-			next.ServeHTTP(w, r)
-			return
-		}
-
-		user = models.AuthenticatedUser{
+		user := models.AuthenticatedUser{
 			Email:    resp.Email,
 			LoggedIn: true,
 		}
