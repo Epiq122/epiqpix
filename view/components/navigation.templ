@@ -5,7 +5,7 @@ import "github.com/epiq122/epiqpixai/view"
 templ Navigation() {
 	<div class="navbar bg-base-100 border-b border-gray-700">
 		<div class="flex-1">
-			<a class="text-2xl font-black text-secondary">EpiqPixAi</a>
+			<a class="text-xl font-black text-primary">EpiqPixai</a>
 		</div>
 		<div class="flex-none">
 			<ul class="menu menu-horizontal px-1">
@@ -17,7 +17,7 @@ templ Navigation() {
 							</summary>
 							<ul class="p-2 bg-base-100 rounded-t-none">
 								<li><a>Settings</a></li>
-								<li><a>Logout</a></li>
+								@LogoutForm()
 							</ul>
 						</details>
 					</li>
@@ -27,4 +27,10 @@ templ Navigation() {
 			</ul>
 		</div>
 	</div>
+}
+
+templ LogoutForm() {
+	<form method="POST" action="/logout">
+		<li><button class="btn btn-primary">Logout</button></li>
+	</form>
 }

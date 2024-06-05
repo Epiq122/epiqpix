@@ -1,0 +1,12 @@
+package settings
+
+import (
+	"github.com/epiq122/epiqpixai/view/layout"
+	"github.com/epiq122/epiqpixai/models"
+)
+
+templ Index(user models.AuthenticatedUser) {
+	@layout.App(true) {
+		<div>hello { user.Email }</div>
+	}
+}

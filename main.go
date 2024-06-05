@@ -23,7 +23,7 @@ func main() {
 
 	router := chi.NewMux()
 
-	router.Use(handler.Withuser)
+	router.Use(handler.WithUser)
 
 	router.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(FS))))
 	router.Get("/", handler.Make(handler.HandleHomeIndex))
@@ -31,10 +31,19 @@ func main() {
 	router.Get("/signup", handler.Make(handler.HandleSignupIndex))
 	router.Post("/signup", handler.Make(handler.HandleSignupCreate))
 	router.Post("/login", handler.Make(handler.HandleLoginCreate))
+	router.Post("/logout", handler.Make(handler.HandleLogoutCreate))
+	router.Get("/auth/callback", handler.Make(handler.HandleAuthCallBack))
+
+	// protected routes
+	router.Group(func(auth chi.Router) {
+		auth.Use(handler.WithAuth)
+
+		auth.Get("/settings", handler.Make(handler.HandleSettingsIndex))
+	})
 
 	port := os.Getenv("HTTP_LISTEN_ADDR")
 	slog.Info("application running", "port", port)
-	log.Fatal(http.ListenAndServe(port, router))
+	log.Fatal(http.ListenAndServe(os.Getenv("HTTP_LISTEN_ADDR"), router))
 }
 
 func initEverything() error {
