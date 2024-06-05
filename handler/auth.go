@@ -3,6 +3,7 @@ package handler
 import (
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/epiq122/epiqpixai/pkg/kit/validate"
 	"github.com/epiq122/epiqpixai/pkg/sb"
@@ -43,6 +44,19 @@ func HandleSignupCreate(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	return render(r, w, auth.SignupSuccess(user.Email))
+}
+
+func HandleLoginWithGoogle(w http.ResponseWriter, r *http.Request) error {
+	resp, err := sb.Client.Auth.SignInWithProvider(supabase.ProviderSignInOptions{
+		Provider: "google",
+		// todo read from env
+		RedirectTo: os.Getenv("REDIRECT_URL"),
+	})
+	if err != nil {
+		return err
+	}
+	http.Redirect(w, r, resp.URL, http.StatusSeeOther)
+	return nil
 }
 
 func HandleLoginCreate(w http.ResponseWriter, r *http.Request) error {
