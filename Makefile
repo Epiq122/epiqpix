@@ -23,8 +23,8 @@ build:
 up: ## DB migration up
 	@go run cmd/migrate/main.go up
 
-drop:
-	@go run cmd/drop/main.go up
+reset: ## reset DB
+	@go run cmd/reset/main.go up
 
 down: ## DB migration down
 	@go run cmd/migrate/main.go down

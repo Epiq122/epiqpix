@@ -1,1 +1,1 @@
-drop table if exists accounts;
+DROP TABLE IF EXISTS accounts;

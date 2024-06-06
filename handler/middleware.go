@@ -8,6 +8,7 @@ import (
 
 	"github.com/epiq122/epiqpixai/models"
 	"github.com/epiq122/epiqpixai/pkg/sb"
+	"github.com/google/uuid"
 	"github.com/gorilla/sessions"
 )
 
@@ -30,6 +31,7 @@ func WithAuth(next http.Handler) http.Handler {
 
 }
 
+// find the user, see if the user is logged in or not
 func WithUser(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(r.URL.Path, "/static") {
@@ -53,7 +55,7 @@ func WithUser(next http.Handler) http.Handler {
 			return
 		}
 		user := models.AuthenticatedUser{
-
+			ID:       uuid.MustParse(resp.ID),
 			Email:    resp.Email,
 			LoggedIn: true,
 		}

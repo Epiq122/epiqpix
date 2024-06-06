@@ -23,6 +23,7 @@ require (
 	github.com/gohugoio/hugo v0.123.8 // indirect
 	github.com/golang-migrate/migrate/v4 v4.17.1 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/google/uuid v1.6.0
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gorilla/sessions v1.2.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect

@@ -34,7 +34,6 @@ func CreateDatabase(
 		host,
 		port,
 	)
-
 	db, err := sql.Open("postgres", uri)
 	if err != nil {
 		return nil, err
@@ -57,8 +56,7 @@ func Init() error {
 		return err
 	}
 	Bun = bun.NewDB(db, pgdialect.New())
-
-	if len(os.Getenv("APP_DEBUG")) > 0 {
+	if len(os.Getenv("DEBUG")) > 0 {
 		Bun.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
 	}
 	return nil
