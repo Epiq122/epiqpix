@@ -2,10 +2,5 @@
 bin
 *_templ.go*
 node_modules
-<<<<<<< HEAD
 *_templ.go
 /public/styles.css
-=======
-package-lock.json
-tmp
->>>>>>> 2.app-layout-templ
