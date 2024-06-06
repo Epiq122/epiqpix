@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/epiq122/epiqpixai/db"
 	"github.com/epiq122/epiqpixai/handler"
 	"github.com/epiq122/epiqpixai/pkg/sb"
 	"github.com/go-chi/chi/v5"
@@ -49,6 +50,9 @@ func main() {
 
 func initEverything() error {
 	if err := godotenv.Load(); err != nil {
+		return err
+	}
+	if err := db.Init(); err != nil {
 		return err
 	}
 	return sb.Init()
